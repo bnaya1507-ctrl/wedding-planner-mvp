@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EaseWed | תכנון חתונה בראש שקט</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Assistant', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        }
+    </style>
+</head>
+<body class="hero-gradient min-h-screen text-gray-800">
+
+    <nav class="p-6 flex justify-between items-center container mx-auto">
+        <div class="text-2xl font-bold tracking-widest text-gray-700">EaseWed</div>
+        <div class="hidden md:flex space-x-reverse space-x-8 text-sm uppercase tracking-wide">
+            <a href="#" class="hover:text-gray-500 transition">איך זה עובד?</a>
+            <a href="#" class="hover:text-gray-500 transition">ה-Timeline שלי</a>
+            <a href="#" class="hover:text-gray-500 transition">התחברות</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 pt-20 pb-12 text-center">
+        <h1 class="text-4xl md:text-6xl font-extralight mb-6 text-gray-900">
+            מתכננים חתונה. <br>
+            <span class="font-bold text-stone-600">בלי הלחץ.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            אנחנו נעזור לכם לבנות ציר זמן מותאם אישית, לנהל את התקציב ולמצוא את הספקים המדויקים לכם. 
+            בלי עומס, בלי ספאם, רק מה שחשוב.
+        </p>
+
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md mx-auto inline-block w-full border border-gray-100">
+            <label for="wedding-date" class="block text-sm font-medium text-gray-700 mb-4">מתי היום הגדול שלכם?</label>
+            <div class="flex flex-col space-y-4">
+                <input type="date" id="wedding-date" 
+                    class="block w-full px-4 py-3 rounded-lg border-gray-200 border focus:ring-2 focus:ring-stone-400 focus:border-transparent outline-none transition">
+                
+                <button onclick="saveDateAndProceed()" 
+                    class="bg-stone-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-stone-700 transition duration-300 shadow-lg">
+                    בואו נתחיל בתכנון
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <section class="container mx-auto px-6 py-20 grid md:grid-cols-3 gap-12 text-center">
+        <div>
+            <div class="text-3xl mb-4">⏳</div>
+            <h3 class="text-xl font-bold mb-2">Timeline חכם</h3>
+            <p class="text-gray-500 text-sm">משימות שמופיעות בדיוק בזמן שצריך אותן. לא דקה לפני.</p>
+        </div>
+        <div>
+            <div class="text-3xl mb-4">💰</div>
+            <h3 class="text-xl font-bold mb-2">ניהול תקציב שקוף</h3>
+            <p class="text-gray-500 text-sm">לדעת בדיוק איפה אתם עומדים בכל רגע, בלי הפתעות בבנק.</p>
+        </div>
+        <div>
+            <div class="text-3xl mb-4">🛡️</div>
+            <h3 class="text-xl font-bold mb-2">פרטיות מלאה</h3>
+            <p class="text-gray-500 text-sm">הפרטים שלכם נשארים אצלכם. אף ספק לא יציק לכם בטלפון.</p>
+        </div>
+    </section>
+
+    <script>
+        function saveDateAndProceed() {
+            const date = document.getElementById('wedding-date').value;
+            if (!date) {
+                alert('אנא בחרו תאריך כדי שנוכל לבנות לכם את הלו"ז');
+                return;
+            }
+            // שמירה ב-LocalStorage כדי להשתמש בזה בעמוד הבא
+            localStorage.setItem('weddingDate', date);
+            alert('התאריך נשמר! עכשיו נוכל לעבור לעמוד ה-Timeline (שנבנה בשלב הבא).');
+            // בהמשך כאן תבוא הפניה: window.location.href = 'timeline.html';
+        }
+    </script>
+</body>
+</html>
