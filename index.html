@@ -56,21 +56,17 @@
     </header>
 
     <script>
-      function handleStart() {
+    function handleStart() {
     const dateValue = document.getElementById('wedding-date').value;
     if (!dateValue) {
         alert('אנא הכניסו תאריך כדי שנוכל להתחיל');
         return;
     }
-    // שמירת התאריך בזיכרון של הדפדפן
     localStorage.setItem('wedflow_wedding_date', dateValue);
     
-    // ההוראה לעבור עמוד - זה מה שהיה חסר!
+    // השורה הזו היא ה"הילוך" שמעביר אותך לעמוד הבא:
     window.location.href = 'timeline.html'; 
 }
-            localStorage.setItem('wedflow_wedding_date', dateValue);
-            alert('התאריך ' + dateValue + ' נשמר! עוברים לשלב הבא.');
-        }
     </script>
 </body>
 </html>
