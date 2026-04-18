@@ -2,77 +2,143 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>WedFlow | רשימת מוזמנים</title>
+    <title>WedFlow | ניהול מוזמנים חכם</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Assistant', sans-serif; background-color: #FCFBF7; }
+        .pink-gradient { background: linear-gradient(135deg, #FBCFE8 0%, #F9A8D4 100%); }
+    </style>
 </head>
-<body class="bg-[#FCFBF7] font-['Assistant'] p-6">
+<body class="p-4 md:p-8">
 
-    <main class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-light mb-8 text-center">ניהול <span class="text-pink-400 font-bold">מוזמנים</span></h1>
+    <main class="max-w-5xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-light">ניהול <span class="text-pink-400 font-bold">מוזמנים</span></h1>
+            <p class="text-slate-500 mt-2">הדביקו מאקסל או הוסיפו ידנית - אנחנו כבר נחשב את השאר</p>
+        </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-pink-50">
-                <h3 class="font-bold mb-4">כמה מוזמנים יש לכם סך הכל?</h3>
-                <input type="number" id="totalInput" class="w-full p-4 rounded-xl bg-slate-50 border-none outline-none mb-4" placeholder="הזינו מספר כולל...">
-                <button onclick="getPrediction()" class="w-full bg-pink-400 text-white p-4 rounded-xl font-bold hover:bg-pink-500 transition">חשב תחזית הגעה</button>
-            </div>
-
-            <div id="predictionResult" class="bg-pink-50 p-6 rounded-[2rem] border border-pink-100 hidden flex flex-col justify-center items-center">
-                <p class="text-sm text-slate-500">צפי הגעה ריאלי (80%):</p>
-                <h2 id="predictedValue" class="text-5xl font-black text-pink-500">0</h2>
-                <p class="text-xs text-pink-400 mt-2">מומלץ לסגור מנות מול האולם לפי מספר זה</p>
+        <div class="mb-8">
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-pink-100">
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center">
+                    <span class="ml-2">📊</span> הדבקה מהירה מאקסל
+                </h3>
+                <textarea id="excelPaste" rows="3" 
+                    class="w-full p-4 rounded-2xl bg-slate-50 border-2 border-dashed border-pink-100 focus:border-pink-300 outline-none transition-all"
+                    placeholder="העתיקו עמודות מאקסל (שם וכמות) והדביקו כאן..."></textarea>
+                <button onclick="importFromExcel()" class="mt-4 bg-slate-800 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition">
+                    ייבא לרשימה
+                </button>
             </div>
         </div>
 
-        <div class="bg-white rounded-[2rem] shadow-sm border border-pink-50 overflow-hidden">
-            <div class="p-6 border-b border-slate-50 flex justify-between items-center">
-                <h3 class="font-bold">רשימה מפורטת</h3>
-                <button onclick="addRow()" class="text-pink-400 text-sm font-bold">+ הוספת אורח</button>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-pink-50 overflow-hidden">
+                    <table class="w-full text-right">
+                        <thead class="bg-pink-50/50 text-pink-400 text-xs font-bold uppercase">
+                            <tr>
+                                <th class="p-5">שם האורח</th>
+                                <th class="p-5">כמות</th>
+                                <th class="p-5 text-center">פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestTableBody">
+                            </tbody>
+                    </table>
+                    <div class="p-4 bg-slate-50/50 text-center">
+                        <button onclick="addRow()" class="text-pink-500 font-bold hover:scale-105 transition">+ הוספת אורח ידנית</button>
+                    </div>
+                </div>
             </div>
-            <table class="w-full text-right">
-                <thead class="bg-slate-50 text-slate-400 text-xs uppercase">
-                    <tr>
-                        <th class="p-4">שם האורח</th>
-                        <th class="p-4">צד (חתן/כלה)</th>
-                        <th class="p-4">כמות</th>
-                        <th class="p-4">פעולות</th>
-                    </tr>
-                </thead>
-                <tbody id="guestTableBody">
-                    </tbody>
-            </table>
+
+            <div class="space-y-6">
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border border-pink-100 text-center sticky top-24">
+                    <p class="text-slate-400 text-sm font-bold uppercase tracking-wider">סה"כ מוזמנים</p>
+                    <h2 id="totalInvited" class="text-5xl font-black text-slate-800 my-2">0</h2>
+                    
+                    <div class="my-6 border-t border-pink-50 pt-6">
+                        <p class="text-pink-400 text-xs font-bold mb-1">תחזית הגעה ריאלית (80%)</p>
+                        <div class="bg-pink-50 rounded-2xl py-4">
+                            <h3 id="predictedValue" class="text-4xl font-black text-pink-500">0</h3>
+                            <p class="text-[10px] text-pink-300">על סמך נתוני השוק</p>
+                        </div>
+                    </div>
+
+                    <button onclick="window.location.href='budget.html'" class="w-full pink-gradient text-white p-4 rounded-2xl font-bold shadow-md">
+                        עדכן תקציב לפי הצפי
+                    </button>
+                </div>
+            </div>
         </div>
     </main>
 
     <script>
-        async function getPrediction() {
-            const total = document.getElementById('totalInput').value;
-            const response = await fetch(`http://localhost:8080/api/predict-attendance?totalInvited=${total}`);
-            const data = await response.json();
-            
-            document.getElementById('predictedValue').innerText = data.estimated;
-            document.getElementById('predictionResult').classList.remove('hidden');
-            
-            // עדכון התקציב באופן אוטומטי בזיכרון
-            localStorage.setItem('estimated_guests', data.estimated);
-        }
-
-        function addRow() {
+        // פונקציה להוספת שורה ריקה
+        function addRow(name = "", count = 1) {
             const tbody = document.getElementById('guestTableBody');
             const row = document.createElement('tr');
-            row.className = "border-b border-slate-50";
+            row.className = "border-b border-pink-50/50 hover:bg-pink-50/20 transition";
             row.innerHTML = `
-                <td class="p-4"><input type="text" class="w-full outline-none" placeholder="שם..."></td>
-                <td class="p-4"><select class="outline-none"><option>כלה</option><option>חתן</option></select></td>
-                <td class="p-4"><input type="number" class="w-20 outline-none" value="1"></td>
-                <td class="p-4 text-red-300 cursor-pointer" onclick="this.parentElement.remove()">מחק</td>
+                <td class="p-4"><input type="text" value="${name}" oninput="updateTotals()" class="w-full bg-transparent outline-none font-medium" placeholder="שם האורח..."></td>
+                <td class="p-4"><input type="number" value="${count}" oninput="updateTotals()" class="w-20 bg-transparent outline-none font-bold text-pink-500"></td>
+                <td class="p-4 text-center">
+                    <button onclick="this.parentElement.parentElement.remove(); updateTotals();" class="text-slate-300 hover:text-red-400">✕</button>
+                </td>
             `;
             tbody.appendChild(row);
+            updateTotals();
         }
 
-        // הוספת שורה ראשונה בטעינה
-        addRow();
+        // פונקציית הקסם: יבוא מאקסל
+        function importFromExcel() {
+            const data = document.getElementById('excelPaste').value;
+            const lines = data.split('\n');
+            
+            lines.forEach(line => {
+                if (line.trim() !== "") {
+                    // אקסל מפריד עמודות בטאב (\t)
+                    const columns = line.split('\t');
+                    const name = columns[0] ? columns[0].trim() : "אורח חדש";
+                    const count = (columns[1] && !isNaN(columns[1])) ? parseInt(columns[1]) : 1;
+                    addRow(name, count);
+                }
+            });
+            
+            document.getElementById('excelPaste').value = ""; // ניקוי התיבה
+        }
+
+        // עדכון סכומים ופנייה ל-Java
+        async function updateTotals() {
+            let total = 0;
+            const counts = document.querySelectorAll('input[type="number"]');
+            counts.forEach(input => {
+                if (input.id !== "excelPaste") { // לא לספור את התיבה הגדולה
+                    total += parseInt(input.value) || 0;
+                }
+            });
+
+            document.getElementById('totalInvited').innerText = total;
+
+            if (total > 0) {
+                try {
+                    // פנייה ל-Java Controller שיצרנו קודם
+                    const response = await fetch(`http://localhost:8080/api/predict-attendance?totalInvited=${total}`);
+                    const data = await response.json();
+                    document.getElementById('predictedValue').innerText = data.estimated;
+                    
+                    // שמירה לשימוש במחשבון התקציב
+                    localStorage.setItem('estimated_guests', data.estimated);
+                } catch (e) {
+                    // אם ה-Java לא רץ, נעשה חישוב צד לקוח פשוט כגיבוי
+                    document.getElementById('predictedValue').innerText = Math.round(total * 0.8);
+                }
+            }
+        }
+
+        // התחלה עם שורה אחת ריקה
+        window.onload = () => addRow();
     </script>
 </body>
 </html>
