@@ -7,26 +7,12 @@
     <title>WedFlow | תכנון חתונה נעים</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            font-family: 'Assistant', sans-serif; 
-            scroll-behavior: smooth;
-        }
-        /* צבע לבן פנינה לרקע */
-        .bg-pearl {
-            background-color: #FCFBF7;
-        }
-        /* ורוד בהיר עדין לאלמנטים */
-        .bg-soft-pink {
-            background-color: #FDF2F8;
-        }
-        /* גרדיאנט ורוד לכפתורים */
-        .pink-gradient {
-            background: linear-gradient(135deg, #FBCFE8 0%, #F9A8D4 100%);
-        }
+        body { font-family: 'Assistant', sans-serif; }
+        .bg-pearl { background-color: #FCFBF7; }
+        .pink-input-card { background-color: #FDF2F8; } /* ורוד בהיר לרקע התיבה */
     </style>
 </head>
 <body class="bg-pearl min-h-screen text-slate-800 antialiased">
@@ -35,26 +21,50 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="text-2xl font-black text-pink-400 tracking-tighter italic">WedFlow.</div>
-                <div class="hidden md:flex space-x-reverse space-x-6 text-sm font-medium">
-                    <a href="#how-it-works" class="text-slate-500 hover:text-pink-400 transition">איך זה עובד?</a>
-                    <a href="#features" class="text-slate-500 hover:text-pink-400 transition">כלים</a>
-                </div>
             </div>
         </div>
     </nav>
 
     <header class="py-16 md:py-28 px-4 text-center">
         <div class="max-w-3xl mx-auto">
-            <span class="inline-block py-1 px-4 rounded-full bg-pink-50 text-pink-400 text-xs font-bold tracking-widest uppercase mb-6">
-                הדרך השקטה אל החופה
-            </span>
-            <h1 class="text-5xl md:text-7xl font-light text-slate-900 mb-8 leading-tight">
+            <h1 class="text-5xl md:text-7xl font-light text-slate-900 mb-6 leading-tight">
                 להפוך את התכנון <br>
-                <span class="text-pink-400 font-semibold italic decoration-pink-200 underline decoration-2 underline-offset-8">לחוויה נעימה</span>
+                <span class="text-pink-400 font-semibold italic">לחוויה נעימה</span>
             </h1>
-            <p class="text-lg md:text-xl text-slate-500 mb-12 max-w-xl mx-auto leading-relaxed">
-                בלי טבלאות מסובכות ובלי רעש מיותר. WedFlow עוזרת לכם להתמקד במה שחשוב באמת, שלב אחר שלב.
+            <p class="text-lg text-slate-500 mb-12 max-w-xl mx-auto">
+                בלי טבלאות מסובכות ובלי רעש מיותר. WedFlow עוזרת לכם להתמקד במה שחשוב באמת.
             </p>
 
-            <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-pink-100/50 border border-pink-50 max-w-md mx-auto">
-                <label for="wedding-date" class="block text-sm font-medium text-slate-600 mb-4 text-right
+            <div class="max-w-md mx-auto">
+                <div class="pink-input-card p-6 md:p-8 rounded-[2.5rem] shadow-inner border border-pink-100">
+                    <label for="wedding-date" class="block text-lg font-medium text-pink-600 mb-4">הכניסו את תאריך החתונה</label>
+                    
+                    <div class="relative flex items-center">
+                        <input type="date" id="wedding-date" 
+                            class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-pink-300 outline-none transition text-slate-700 text-lg shadow-sm">
+                        
+                        <button onclick="handleStart()" 
+                            class="absolute left-2 bg-pink-400 hover:bg-pink-500 text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition transform active:scale-90">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        function handleStart() {
+            const dateValue = document.getElementById('wedding-date').value;
+            if (!dateValue) {
+                alert('אנא הכניסו תאריך כדי שנוכל להתחיל');
+                return;
+            }
+            localStorage.setItem('wedflow_wedding_date', dateValue);
+            alert('התאריך ' + dateValue + ' נשמר! עוברים לשלב הבא.');
+        }
+    </script>
+</body>
+</html>
