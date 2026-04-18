@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WedFlow | ה-Timeline שלכם</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Assistant', sans-serif; }
+        .bg-pearl { background-color: #FCFBF7; }
+        .task-done { text-decoration: line-through; opacity: 0.5; }
+    </style>
+</head>
+<body class="bg-pearl min-h-screen text-slate-800">
+
+    <nav class="bg-white/80 backdrop-blur-md border-b border-pink-100 p-4 sticky top-0 z-50">
+        <div class="max-w-2xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-black text-pink-400 italic">WedFlow.</a>
+            <div id="days-count" class="text-sm font-bold bg-pink-50 text-pink-500 px-3 py-1 rounded-full"></div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto p-6">
+        <header class="mb-10 mt-6">
+            <h1 class="text-3xl font-light mb-2">המסלול שלכם</h1>
+            <p class="text-slate-500">בואו נתמקד במשימות של החודש הקרוב</p>
+        </header>
+
+        <div class="bg-pink-100 h-2 w-full rounded-full mb-8">
+            <div id="progress-bar" class="bg-pink-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+
+        <div id="task-list" class="space-y-4">
+            </div>
+    </main>
+
+    <script>
+        // 1. קבלת התאריך מהזיכרון
+        const weddingDateStr = localStorage.getItem('wedflow_wedding_date');
+        
+        if (!weddingDateStr) {
+            window.location.href = 'index.html'; // אם אין תאריך, חזרו להתחלה
+        }
+
+        const weddingDate = new Date(weddingDateStr);
+        const today = new Date();
+        
+        // 2. חישוב ימים שנותרו
+        const diffTime = weddingDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        document.getElementById('days-count').innerText = `עוד ${diffDays} ימים לחתונה`;
+
+        // 3. רשימת משימות לדוגמה (אפשר להרחיב)
+        const tasks = [
+            { id: 1, text: "לקבוע תקציב מקסימלי", done: false },
+            { id: 2, text: "להכין רשימת אורחים ראשונית", done: false },
+            { id: 3, text: "לסגור אולם/גן אירועים", done: false },
+            { id: 4, text: "לבחור צלם ו-DJ", done: false }
+        ];
+
+        // 4. רינדור המשימות למסך
+        function renderTasks() {
+            const container = document.getElementById('task-list');
+            container.innerHTML = '';
+            
+            let doneCount = 0;
+
+            tasks.forEach(task => {
+                if(task.done) doneCount++;
+                
+                const div = document.createElement('div');
+                div.className = `flex items-center p-5 bg-white rounded-2xl shadow-sm border border-pink-50 transition ${task.done ? 'bg-slate-50' : ''}`;
+                div.innerHTML = `
+                    <input type="checkbox" ${task.done ? 'checked' : ''} 
+                        onclick="toggleTask(${task.id})"
+                        class="w-6 h-6 rounded-full border-pink-300 text-pink-400 focus:ring-pink-300 cursor-pointer">
+                    <span class="mr-4 text-lg ${task.done ? 'task-done text-slate-400' : 'text-slate-700'}">${task.text}</span>
+                `;
+                container.appendChild(div);
+            });
+
+            // עדכון פס התקדמות
+            const progress = (doneCount / tasks.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        // 5. פונקציה לסימון משימה כבוצעה
+        window.toggleTask = function(id) {
+            const task = tasks.find(t => t.id === id);
+            task.done = !task.done;
+            renderTasks();
+        };
+
+        renderTasks();
+    </script>
+</body>
+</html>
