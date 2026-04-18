@@ -10,3 +10,30 @@ function handleStart() {
     // מעבר לעמוד ה-Timeline
     window.location.href = 'timeline.html'; 
 }
+public class WeddingTaskEngine {
+    private int totalTasks;
+    private int completedTasks;
+
+    public WeddingTaskEngine(int totalTasks) {
+        this.totalTasks = totalTasks;
+        this.completedTasks = 0;
+    }
+
+    public void completeTask() {
+        if (completedTasks < totalTasks) {
+            completedTasks++;
+        }
+    }
+
+    public double getProgressPercentage() {
+        if (totalTasks == 0) return 0;
+        return (double) completedTasks / totalTasks * 100;
+    }
+
+    public String getStatusMessage() {
+        double progress = getProgressPercentage();
+        if (progress == 100) return "מזל טוב! הכל מוכן.";
+        if (progress > 50) return "אתם בדרך הטובה!";
+        return "יש עוד עבודה, אבל אנחנו פה לעזור.";
+    }
+}
