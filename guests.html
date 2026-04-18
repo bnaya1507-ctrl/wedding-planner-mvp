@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>WedFlow | רשימת מוזמנים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#FCFBF7] font-['Assistant'] p-6">
+
+    <main class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-light mb-8 text-center">ניהול <span class="text-pink-400 font-bold">מוזמנים</span></h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-pink-50">
+                <h3 class="font-bold mb-4">כמה מוזמנים יש לכם סך הכל?</h3>
+                <input type="number" id="totalInput" class="w-full p-4 rounded-xl bg-slate-50 border-none outline-none mb-4" placeholder="הזינו מספר כולל...">
+                <button onclick="getPrediction()" class="w-full bg-pink-400 text-white p-4 rounded-xl font-bold hover:bg-pink-500 transition">חשב תחזית הגעה</button>
+            </div>
+
+            <div id="predictionResult" class="bg-pink-50 p-6 rounded-[2rem] border border-pink-100 hidden flex flex-col justify-center items-center">
+                <p class="text-sm text-slate-500">צפי הגעה ריאלי (80%):</p>
+                <h2 id="predictedValue" class="text-5xl font-black text-pink-500">0</h2>
+                <p class="text-xs text-pink-400 mt-2">מומלץ לסגור מנות מול האולם לפי מספר זה</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm border border-pink-50 overflow-hidden">
+            <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+                <h3 class="font-bold">רשימה מפורטת</h3>
+                <button onclick="addRow()" class="text-pink-400 text-sm font-bold">+ הוספת אורח</button>
+            </div>
+            <table class="w-full text-right">
+                <thead class="bg-slate-50 text-slate-400 text-xs uppercase">
+                    <tr>
+                        <th class="p-4">שם האורח</th>
+                        <th class="p-4">צד (חתן/כלה)</th>
+                        <th class="p-4">כמות</th>
+                        <th class="p-4">פעולות</th>
+                    </tr>
+                </thead>
+                <tbody id="guestTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        async function getPrediction() {
+            const total = document.getElementById('totalInput').value;
+            const response = await fetch(`http://localhost:8080/api/predict-attendance?totalInvited=${total}`);
+            const data = await response.json();
+            
+            document.getElementById('predictedValue').innerText = data.estimated;
+            document.getElementById('predictionResult').classList.remove('hidden');
+            
+            // עדכון התקציב באופן אוטומטי בזיכרון
+            localStorage.setItem('estimated_guests', data.estimated);
+        }
+
+        function addRow() {
+            const tbody = document.getElementById('guestTableBody');
+            const row = document.createElement('tr');
+            row.className = "border-b border-slate-50";
+            row.innerHTML = `
+                <td class="p-4"><input type="text" class="w-full outline-none" placeholder="שם..."></td>
+                <td class="p-4"><select class="outline-none"><option>כלה</option><option>חתן</option></select></td>
+                <td class="p-4"><input type="number" class="w-20 outline-none" value="1"></td>
+                <td class="p-4 text-red-300 cursor-pointer" onclick="this.parentElement.remove()">מחק</td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        // הוספת שורה ראשונה בטעינה
+        addRow();
+    </script>
+</body>
+</html>
