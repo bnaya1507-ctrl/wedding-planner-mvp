@@ -1,0 +1,12 @@
+function handleStart() {
+    const dateValue = document.getElementById('wedding-date').value;
+    if (!dateValue) {
+        alert('אנא הכניסו תאריך כדי שנוכל להתחיל');
+        return;
+    }
+    // שמירת התאריך
+    localStorage.setItem('wedflow_wedding_date', dateValue);
+    
+    // מעבר לעמוד ה-Timeline
+    window.location.href = 'timeline.html'; 
+}
