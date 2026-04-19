@@ -6,63 +6,100 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; background-color: #fafafa; }
-        .venue-card img { transition: transform 0.5s ease; }
-        .venue-card:hover img { transform: scale(1.1); }
+        body { font-family: 'Assistant', sans-serif; background-color: #ffffff; }
+        .venue-image { object-fit: cover; width: 100%; aspect-ratio: 1/1; }
+        .heart-pop { animation: heartBeat 0.3s ease-out; }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
-<body>
+<body class="pb-20">
 
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 p-4">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <span class="text-2xl font-black text-pink-400 italic">WedFlow</span>
-            <div class="flex space-y-0 space-x-4">
-                <span class="text-gray-400">🔍 חיפוש לפי התאמה</span>
-            </div>
-        </div>
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 p-4 flex justify-between items-center">
+        <span class="text-2xl font-black text-pink-400 italic">WedFlow</span>
+        <div class="text-sm font-bold text-slate-700">גלה מקומות</div>
     </nav>
 
-    <main class="max-w-md mx-auto p-4 pb-20">
-        <div class="mb-6 px-2">
-            <h2 class="text-xl font-bold">מקומות שמתאימים לכם...</h2>
-            <p class="text-gray-400 text-sm">סיננו עבורכם את התוצאות הכי רלוונטיות</p>
-        </div>
-
-        <div id="venueGrid" class="grid grid-cols-2 gap-2">
+    <main class="max-w-md mx-auto">
+        <div id="venueGrid" class="grid grid-cols-3 gap-0.5">
             </div>
     </main>
 
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex justify-around items-center z-50">
+        <button onclick="renderVenues(allLoadedVenues)" class="text-2xl">🏠</button>
+        <button onclick="showSaved()" class="text-2xl relative">
+            ❤️
+            <span id="savedCount" class="absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
+        </button>
+        <button onclick="window.location.href='budget.html'" class="text-2xl">💰</button>
+    </div>
+
     <script>
+        let allLoadedVenues = [];
+        let savedVenues = JSON.parse(localStorage.getItem('saved_venues')) || [];
+
         async function loadVenues() {
-            // משיכת ההעדפות ששמרנו בשאלון
-            const location = localStorage.getItem('venue_location');
-            const type = localStorage.getItem('venue_style');
+            const location = localStorage.getItem('venue_location') || 'center';
+            const type = localStorage.getItem('venue_style') || 'garden';
 
             try {
                 const response = await fetch(`http://localhost:8080/api/venues/search?location=${location}&type=${type}`);
-                const venues = await response.json();
-
-                const grid = document.getElementById('venueGrid');
-                if(venues.length === 0) {
-                    grid.innerHTML = "<p class='col-span-2 text-center py-10 text-gray-400'>לא מצאנו אולם שמתאים בדיוק, נסו לשנות אזור...</p>";
-                    return;
-                }
-
-                venues.forEach(v => {
-                    const card = `
-                        <div class="venue-card relative aspect-square overflow-hidden rounded-lg shadow-sm group">
-                            <img src="${v.imageUrl}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex flex-col justify-end p-3">
-                                <h3 class="text-white font-bold text-sm leading-tight">${v.name}</h3>
-                                <p class="text-white/80 text-[10px]">₪${v.pricePerPlate} למנה</p>
-                            </div>
-                        </div>
-                    `;
-                    grid.innerHTML += card;
-                });
+                allLoadedVenues = await response.json();
+                renderVenues(allLoadedVenues);
+                updateSavedCount();
             } catch (error) {
-                alert("וודאי שה-Java רץ באקליפס!");
+                console.error("Java server not running");
+                // נתונים פיקטיביים לניסיון אם השרת לא עובד
+                allLoadedVenues = [
+                    {name: "הגן הקסום", imageUrl: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=500", pricePerPlate: 350},
+                    {name: "טראסק", imageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=500", pricePerPlate: 420},
+                    {name: "קאי", imageUrl: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=500", pricePerPlate: 380}
+                ];
+                renderVenues(allLoadedVenues);
             }
+        }
+
+        function renderVenues(venues) {
+            const grid = document.getElementById('venueGrid');
+            grid.innerHTML = "";
+            venues.forEach(v => {
+                const isSaved = savedVenues.some(saved => saved.name === v.name);
+                const item = `
+                    <div class="relative group cursor-pointer" ondblclick="toggleSave('${v.name}')">
+                        <img src="${v.imageUrl}" class="venue-image">
+                        <button onclick="toggleSave('${v.name}')" class="absolute bottom-2 right-2 text-xl">
+                            ${isSaved ? '❤️' : '🤍'}
+                        </button>
+                    </div>
+                `;
+                grid.innerHTML += item;
+            });
+        }
+
+        function toggleSave(name) {
+            const index = savedVenues.findIndex(v => v.name === name);
+            if (index > -1) {
+                savedVenues.splice(index, 1); // הסרה
+            } else {
+                const venue = allLoadedVenues.find(v => v.name === name);
+                savedVenues.push(venue); // הוספה
+            }
+            localStorage.setItem('saved_venues', JSON.stringify(savedVenues));
+            renderVenues(allLoadedVenues);
+            updateSavedCount();
+        }
+
+        function showSaved() {
+            renderVenues(savedVenues);
+        }
+
+        function updateSavedCount() {
+            const badge = document.getElementById('savedCount');
+            badge.innerText = savedVenues.length;
+            badge.classList.toggle('hidden', savedVenues.length === 0);
         }
 
         window.onload = loadVenues;
