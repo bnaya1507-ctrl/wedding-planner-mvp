@@ -2,72 +2,62 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>WedFlow | תכנון חתונה נעים</title>
-    
+    <title>WedFlow | מתחילים כאן</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;400;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Assistant', sans-serif; }
-        .bg-pearl { background-color: #FCFBF7; }
-        .pink-input-card { background-color: #FDF2F8; } /* ורוד בהיר לרקע התיבה */
+        body { font-family: 'Assistant', sans-serif; background-color: #FCFBF7; }
+        .pink-gradient { background: linear-gradient(135deg, #FBCFE8 0%, #F9A8D4 100%); }
     </style>
 </head>
-<body class="bg-pearl min-h-screen text-slate-800 antialiased">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <nav class="bg-white/80 backdrop-blur-md border-b border-pink-100 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="text-2xl font-black text-pink-400 tracking-tighter italic">WedFlow.</div>
-            </div>
+    <main class="max-w-md w-full bg-white p-10 rounded-[3rem] shadow-xl border border-pink-50 text-center">
+        <div class="mb-8">
+            <span class="text-3xl font-black text-pink-400 italic">WedFlow.</span>
+            <h1 class="text-2xl font-light text-slate-700 mt-4">נעים להכיר! איך קוראים לכם?</h1>
         </div>
-    </nav>
 
-    <header class="py-16 md:py-28 px-4 text-center">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="text-5xl md:text-7xl font-light text-slate-900 mb-6 leading-tight">
-                להפוך את התכנון <br>
-                <span class="text-pink-400 font-semibold italic">לחוויה נעימה</span>
-            </h1>
-            <p class="text-lg text-slate-500 mb-12 max-w-xl mx-auto">
-                בלי טבלאות מסובכות ובלי רעש מיותר. WedFlow עוזרת לכם להתמקד במה שחשוב באמת.
-            </p>
-
-            <div class="max-w-md mx-auto">
-                <div class="pink-input-card p-6 md:p-8 rounded-[2.5rem] shadow-inner border border-pink-100">
-                    <label for="wedding-date" class="block text-lg font-medium text-pink-600 mb-4">הכניסו את תאריך החתונה</label>
-                    
-                    <div class="relative flex items-center">
-                        <input type="date" id="wedding-date" 
-                            class="w-full px-6 py-4 rounded-2xl bg-white border-none focus:ring-2 focus:ring-pink-300 outline-none transition text-slate-700 text-lg shadow-sm">
-                        
-                        <button onclick="handleStart()" 
-                            class="absolute left-2 bg-pink-400 hover:bg-pink-500 text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition transform active:scale-90">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" id="partner1" placeholder="שם הכלה" 
+                       class="w-full p-4 rounded-2xl bg-slate-50 border border-transparent focus:border-pink-200 outline-none transition-all text-center font-bold">
+                <input type="text" id="partner2" placeholder="שם החתן" 
+                       class="w-full p-4 rounded-2xl bg-slate-50 border border-transparent focus:border-pink-200 outline-none transition-all text-center font-bold">
             </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">תאריך החתונה (אם יש)</label>
+                <input type="date" id="weddingDate" 
+                       class="w-full p-4 rounded-2xl bg-slate-50 border border-transparent focus:border-pink-200 outline-none transition-all text-center">
+            </div>
+
+            <button onclick="startJourney()" 
+                    class="w-full pink-gradient text-white p-5 rounded-2xl font-bold shadow-lg hover:scale-[1.02] transition-all text-xl mt-4">
+                בואו נתחיל לתכנן!
+            </button>
         </div>
-    </header>
+    </main>
 
     <script>
-    function handleStart() {
-    const dateValue = document.getElementById('wedding-date').value;
-    if (!dateValue) {
-        alert('אנא הכניסו תאריך כדי שנוכל להתחיל');
-        return;
-    }
-    localStorage.setItem('wedflow_wedding_date', dateValue);
-    
-    // השורה הזו היא ה"הילוך" שמעביר אותך לעמוד הבא:
-    window.location.href = 'budget.html'; 
-}
+        function startJourney() {
+            const p1 = document.getElementById('partner1').value;
+            const p2 = document.getElementById('partner2').value;
+            const date = document.getElementById('weddingDate').value;
+
+            if(!p1 || !p2) {
+                alert("אנא הכניסו את שמות בני הזוג");
+                return;
+            }
+
+            // שמירה בזיכרון המקומי (Local Storage)
+            localStorage.setItem('p1_name', p1);
+            localStorage.setItem('p2_name', p2);
+            localStorage.setItem('wedding_date', date);
+
+            // מעבר לשלב הבא - רשימת מוזמנים
+            window.location.href = 'guests.html';
+        }
     </script>
 </body>
 </html>
-
