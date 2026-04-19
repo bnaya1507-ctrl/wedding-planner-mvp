@@ -10,6 +10,18 @@
         .pink-gradient { background: linear-gradient(135deg, #FBCFE8 0%, #F9A8D4 100%); }
     </style>
 </head>
+    <div class="bg-pink-50/50 p-3 text-center text-sm font-medium text-pink-400">
+    מזל טוב, <span id="displayNames" class="font-bold text-pink-500"></span>! הגיע הזמן לעשות סדר.
+</div>
+
+<script>
+    // הקוד הזה מושך את השמות מהזיכרון ומציג אותם
+    const name1 = localStorage.getItem('p1_name');
+    const name2 = localStorage.getItem('p2_name');
+    if(name1 && name2) {
+        document.getElementById('displayNames').innerText = `${name1} & ${name2}`;
+    }
+</script>
 <body class="p-4 md:p-8">
 
     <main class="max-w-5xl mx-auto">
